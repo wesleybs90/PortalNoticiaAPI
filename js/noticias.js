@@ -1,13 +1,15 @@
 const API_KEY = '54f8f7e65707407980fab520fd17b747';
 const API_BASE = 'http://newsapi.org/v2';
 const listaDeNoticias = document.getElementById('listaDeNoticias');
+const navBar = document.getElementById('navbarNav');
 const MAX_LENGTH = 100;
 
 //async-await para não usar o then
-async function getNoticiasAwait() {
-    const resposta = await fetch(`${API_BASE}/top-headlines?country=br&apiKey=${API_KEY}`);
+async function getNoticiasAwait(tipoNoticias) {
+    const resposta = await fetch(`${API_BASE}/top-headlines?category=${tipoNoticias}&country=br&apiKey=${API_KEY}`);
     const listaNoticias = await resposta.json();
 
+    listaDeNoticias.innerHTML = "";
     listaNoticias.articles.forEach(noticia => {
         if (noticia.description.length > MAX_LENGTH) {
             noticia.description = noticia.description.substring(0, MAX_LENGTH) + "...";
@@ -37,4 +39,21 @@ function getNoticias() {
     })
 }
 
-getNoticiasAwait();
+
+let categoria = 'general';
+navBar.addEventListener('click', function (event) {
+    switch (event.target.innerText) {
+        case 'Ultimas Noticias':
+            categoria = 'general';
+            break;
+        case 'Noticias de Tecnologia':
+            categoria = 'technology';
+            break;
+        case 'Atualizar':
+            getNoticiasAwait(categoria);
+            break;
+    }
+    getNoticiasAwait(categoria);
+})
+
+getNoticiasAwait(categoria);
